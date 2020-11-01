@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    metallb.universe.tf/allow-shared-ip: shared
+  namespace: unifi
+  creationTimestamp: null
+  labels:
+    app: unifi-controller
+  name: unifi-controller-tcp
+spec:
+  ports:
+    - name: "web"
+      port: 8080
+      targetPort: 8080
+    - name: "controller-api"
+      port: 8443
+      targetPort: 8443
+    - name: "https-portal-redirection"
+      port: 8843
+      targetPort: 8843
+    - name: "http-portal-redirection"
+      port: 8880
+      targetPort: 8880
+    - name: "unifi-mobile-speed-test"
+      port: 6789
+      targetPort: 6789
+  selector:
+    app: unifi-controller
+  type: LoadBalancer

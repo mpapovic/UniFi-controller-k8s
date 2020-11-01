@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: unifi
+  labels:
+    app: unifi-controller
+  name: unifi-controller
+spec:
+  replicas: 1
+  serviceName: unifi-controller
+  selector:
+    matchLabels:
+      app: unifi-controller
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: unifi-controller
+    spec:
+      containers:
+        - env:
+            - name: MEM_LIMIT
+              value: 1024M
+            - name: PGID
+              value: "1000"
+            - name: PUID
+              value: "1000"
+          image: linuxserver/unifi-controller:version-6.0.28
+          name: unifi-controller
+          ports:
+            - containerPort: 3478
+              name: stun
+              protocol: UDP
+            - containerPort: 10001
+              name: device-discovery
+              protocol: UDP
+            - containerPort: 8080
+              name: web
+            - containerPort: 8443
+              name: controller-api
+            - containerPort: 8843
+              name: https-portal-redirection
+            - containerPort: 8880
+              name: http-portal-redirection
+            - containerPort: 6789
+              name: unifi-mobile-speed-test
+          volumeMounts:
+            - mountPath: /config
+              name: unifi
+      restartPolicy: Always
+      volumes:
+        - name: unifi
+          persistentVolumeClaim:
+            claimName: unifi
